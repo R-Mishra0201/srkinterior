@@ -2,29 +2,46 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Phone, Mail, MapPin, Clock, Send } from "lucide-react";
-import sendToWhatsApp from "@/lib/sendToWhatsApp";
 
 export default function Contact() {
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
-    // Simulate form processing
-    setTimeout(() => {
-      sendToWhatsApp(form.name, form.message, form.phone);
-      setLoading(false);
-      setForm({ name: "", email: "", phone: "", message: "" });
-    }, 1000);
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(form)
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setSuccess(true);
+        setForm({ name: "", email: "", phone: "", message: "" });
+      } else {
+        alert("❌ Failed to send message.");
+        console.error(data.error);
+      }
+    } catch (error) {
+      alert("❌ Something went wrong.");
+      console.error(error);
+    }
+
+    setLoading(false);
   };
 
   const contactInfo = [
     {
       icon: Phone,
       title: "Phone",
-      details: "+91 98765 43210",
+      details: "+91 9871571613",
       subtitle: "Call us anytime"
     },
     {
@@ -36,7 +53,7 @@ export default function Contact() {
     {
       icon: MapPin,
       title: "Location",
-      details: "Mumbai, Maharashtra",
+      details: "Noida, Uttar Pradesh",
       subtitle: "Visit our studio"
     },
     {
@@ -59,8 +76,7 @@ export default function Contact() {
         >
           <span className="text-yellow-600 font-semibold tracking-wide uppercase">Get In Touch</span>
           <h2 className="text-4xl md:text-5xl font-bold mt-4 mb-6 text-black">
-            Start Your Design
-            <span className="text-yellow-600"> Journey</span>
+            Start Your Design <span className="text-yellow-600">Journey</span>
           </h2>
           <p className="text-gray-600 text-lg max-w-3xl mx-auto">
             Ready to transform your space? Contact us today for a consultation and let's bring your vision to life.
@@ -84,7 +100,8 @@ export default function Contact() {
                   <input
                     type="text"
                     required
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-300"
+                    name="name"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-yellow-400 text-black"
                     placeholder="Enter your name"
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
@@ -95,37 +112,40 @@ export default function Contact() {
                   <input
                     type="email"
                     required
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-300"
+                    name="email"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-yellow-400 text-black"
                     placeholder="Enter your email"
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
                   />
                 </div>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label>
                 <input
                   type="tel"
-                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-300"
+                  name="phone"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-yellow-400 text-black"
                   placeholder="Enter your phone number"
                   value={form.phone}
                   onChange={(e) => setForm({ ...form, phone: e.target.value })}
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Message</label>
                 <textarea
                   required
+                  name="message"
                   rows={5}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-300 resize-none"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-yellow-400 resize-none text-black"
                   placeholder="Tell us about your project..."
                   value={form.message}
                   onChange={(e) => setForm({ ...form, message: e.target.value })}
                 />
               </div>
-              
+
               <motion.button
                 type="submit"
                 disabled={loading}
@@ -138,14 +158,20 @@ export default function Contact() {
                 ) : (
                   <>
                     <Send className="w-5 h-5" />
-                    <span>Send via WhatsApp</span>
+                    <span>Send Message</span>
                   </>
                 )}
               </motion.button>
+
+              {success && (
+                <p className="text-green-600 text-center font-medium">
+                  ✅ Your message was sent successfully!
+                </p>
+              )}
             </form>
           </motion.div>
 
-          {/* Contact Information */}
+          {/* Contact Info */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}

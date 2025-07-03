@@ -1,5 +1,5 @@
 export default function sendToWhatsApp(name: string, message: string, phone?: string) {
-  const businessPhone = "918888888888"; // Replace with actual business WhatsApp number
+  const businessPhone = "9599367759"; // Replace with actual business WhatsApp number
   
   let whatsappMessage = `🏠 *New Design Inquiry*\n\n`;
   whatsappMessage += `👤 *Name:* ${name}\n`;
