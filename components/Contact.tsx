@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Phone, Mail, MapPin, Clock, Send } from "lucide-react";
+import emailjs from "@emailjs/browser";
 
 export default function Contact() {
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
@@ -12,211 +13,112 @@ export default function Contact() {
     e.preventDefault();
     setLoading(true);
 
-    try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
+    const templateParams = {
+      from_name: form.name,
+      email: form.email,
+      phone: form.phone,
+      message: form.message,
+    };
+
+    emailjs
+      .send("service_q0ha99f", "template_jcv7nyw", templateParams, "UYZwRWWhKgDx-eMI_")
+      .then(
+        () => {
+          setSuccess(true);
+          setForm({ name: "", email: "", phone: "", message: "" });
+          setLoading(false);
         },
-        body: JSON.stringify(form)
-      });
-
-      const data = await res.json();
-      if (res.ok) {
-        setSuccess(true);
-        setForm({ name: "", email: "", phone: "", message: "" });
-      } else {
-        alert("❌ Failed to send message.");
-        console.error(data.error);
-      }
-    } catch (error) {
-      alert("❌ Something went wrong.");
-      console.error(error);
-    }
-
-    setLoading(false);
+        (error) => {
+          console.error("❌ Failed:", error);
+          alert("Something went wrong!");
+          setLoading(false);
+        }
+      );
   };
 
-  const contactInfo = [
-    {
-      icon: Phone,
-      title: "Phone",
-      details: "+91 9871571613",
-      subtitle: "Call us anytime"
-    },
-    {
-      icon: Mail,
-      title: "Email",
-      details: "info@srkinteriors.com",
-      subtitle: "24/7 support"
-    },
-    {
-      icon: MapPin,
-      title: "Location",
-      details: "Noida, Uttar Pradesh",
-      subtitle: "Visit our studio"
-    },
-    {
-      icon: Clock,
-      title: "Hours",
-      details: "Mon - Sat: 9AM - 7PM",
-      subtitle: "Sunday by appointment"
-    }
-  ];
-
   return (
-    <section className="py-24 px-6 bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <span className="text-yellow-600 font-semibold tracking-wide uppercase">Get In Touch</span>
-          <h2 className="text-4xl md:text-5xl font-bold mt-4 mb-6 text-black">
-            Start Your Design <span className="text-yellow-600">Journey</span>
-          </h2>
-          <p className="text-gray-600 text-lg max-w-3xl mx-auto">
-            Ready to transform your space? Contact us today for a consultation and let's bring your vision to life.
-          </p>
-        </motion.div>
+    <section className="py-20 px-4 bg-gray-100">
+      <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-10">
+        <div>
+          <h2 className="text-4xl font-bold mb-6">Get In Touch</h2>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <input
+              type="text"
+              placeholder="Full Name"
+              className="w-full border px-4 py-3 rounded text-black"
+              value={form.name}
+              required
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+            />
+            <input
+              type="email"
+              placeholder="Email Address"
+              className="w-full border px-4 py-3 rounded text-black"
+              value={form.email}
+              required
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+            />
+            <input
+              type="tel"
+              placeholder="Phone Number"
+              className="w-full border px-4 py-3 rounded text-black"
+              value={form.phone}
+              onChange={(e) => setForm({ ...form, phone: e.target.value })}
+            />
+            <textarea
+              placeholder="Your Message"
+              rows={5}
+              className="w-full border px-4 py-3 rounded text-black"
+              value={form.message}
+              required
+              onChange={(e) => setForm({ ...form, message: e.target.value })}
+            />
+            <motion.button
+              whileTap={{ scale: 0.97 }}
+              type="submit"
+              disabled={loading}
+              className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 rounded"
+            >
+              {loading ? "Sending..." : "Send Message"}
+            </motion.button>
 
-        <div className="grid lg:grid-cols-2 gap-16">
-          {/* Contact Form */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="bg-white p-8 rounded-2xl shadow-lg"
-          >
-            <h3 className="text-2xl font-bold text-black mb-6">Send us a message</h3>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
-                  <input
-                    type="text"
-                    required
-                    name="name"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-yellow-400 text-black"
-                    placeholder="Enter your name"
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
-                  <input
-                    type="email"
-                    required
-                    name="email"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-yellow-400 text-black"
-                    placeholder="Enter your email"
-                    value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  />
-                </div>
-              </div>
+            {success && (
+              <p className="text-green-600 font-medium mt-3">
+                ✅ Message sent successfully!
+              </p>
+            )}
+          </form>
+        </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label>
-                <input
-                  type="tel"
-                  name="phone"
-                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-yellow-400 text-black"
-                  placeholder="Enter your phone number"
-                  value={form.phone}
-                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Message</label>
-                <textarea
-                  required
-                  name="message"
-                  rows={5}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-yellow-400 resize-none text-black"
-                  placeholder="Tell us about your project..."
-                  value={form.message}
-                  onChange={(e) => setForm({ ...form, message: e.target.value })}
-                />
-              </div>
-
-              <motion.button
-                type="submit"
-                disabled={loading}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-semibold py-4 rounded-lg hover:from-yellow-500 hover:to-yellow-600 transition-all duration-300 flex items-center justify-center space-x-2 disabled:opacity-70"
-              >
-                {loading ? (
-                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-black border-t-transparent" />
-                ) : (
-                  <>
-                    <Send className="w-5 h-5" />
-                    <span>Send Message</span>
-                  </>
-                )}
-              </motion.button>
-
-              {success && (
-                <p className="text-green-600 text-center font-medium">
-                  ✅ Your message was sent successfully!
-                </p>
-              )}
-            </form>
-          </motion.div>
-
-          {/* Contact Info */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            viewport={{ once: true }}
-            className="space-y-8"
-          >
+        <div className="space-y-6">
+          <div className="flex items-start space-x-4">
+            <Phone className="text-yellow-600 mt-1" />
             <div>
-              <h3 className="text-2xl font-bold text-black mb-6">Contact Information</h3>
-              <p className="text-gray-600 mb-8">
-                We're here to help you create the perfect space. Reach out through any of these channels.
-              </p>
+              <h4 className="font-bold">Phone</h4>
+              <p>+91 9871571613</p>
             </div>
-
-            <div className="grid sm:grid-cols-2 gap-6">
-              {contactInfo.map((info, index) => (
-                <motion.div
-                  key={index}
-                  whileHover={{ y: -5 }}
-                  className="bg-white p-6 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300"
-                >
-                  <div className="bg-yellow-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
-                    <info.icon className="w-6 h-6 text-yellow-600" />
-                  </div>
-                  <h4 className="font-semibold text-black mb-1">{info.title}</h4>
-                  <p className="text-gray-800 font-medium">{info.details}</p>
-                  <p className="text-gray-500 text-sm">{info.subtitle}</p>
-                </motion.div>
-              ))}
+          </div>
+          <div className="flex items-start space-x-4">
+            <Mail className="text-yellow-600 mt-1" />
+            <div>
+              <h4 className="font-bold">Email</h4>
+              <p>info@srkinteriors.com</p>
             </div>
-
-            <div className="bg-black text-white p-8 rounded-xl">
-              <h4 className="text-xl font-bold mb-4">Ready to get started?</h4>
-              <p className="text-gray-300 mb-6">
-                Book a free consultation with our design experts and discover how we can transform your space.
-              </p>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="bg-yellow-400 text-black px-6 py-3 rounded-lg font-semibold hover:bg-yellow-500 transition-colors duration-300"
-              >
-                Book Free Consultation
-              </motion.button>
+          </div>
+          <div className="flex items-start space-x-4">
+            <MapPin className="text-yellow-600 mt-1" />
+            <div>
+              <h4 className="font-bold">Location</h4>
+              <p>Noida, Uttar Pradesh</p>
             </div>
-          </motion.div>
+          </div>
+          <div className="flex items-start space-x-4">
+            <Clock className="text-yellow-600 mt-1" />
+            <div>
+              <h4 className="font-bold">Hours</h4>
+              <p>Mon - Sat: 9AM - 7PM</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>

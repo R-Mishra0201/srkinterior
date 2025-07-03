@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
+  // ❌ Ye hata do:
+  // output: 'export',
+
   eslint: {
     ignoreDuringBuilds: true,
   },
