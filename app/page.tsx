@@ -4,7 +4,7 @@ import Services from "@/components/Services";
 import Projects from "@/components/Projects";
 import Contact from "@/components/Contact";
 import Testimonials from "@/components/testimonials";
-import ServicePartners from "@components/ServicePartner";
+import ServicePartners from "@/components/ServicePartner";
 
 export default function Home() {
   return (
