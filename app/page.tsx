@@ -12,7 +12,7 @@ export default function Home() {
       <About />
       <Services />
       <Projects />
-      <Testimonials /> {/* 👈 Add here */}
+      <Testimonials /> 
       <Contact />
     </main>
   );
