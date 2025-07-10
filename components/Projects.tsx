@@ -1,12 +1,12 @@
 "use client";
 import { motion } from "framer-motion";
 import ProjectCard from "./ProjectCard";
-import projects from "@/constants/projects";
+import projects from "@/constants/projects"; // default export
 
 export default function Projects() {
   return (
-    <section className="py-24 px-6 bg-white text-black">
-      <div className="max-w-6xl mx-auto">
+    <section className="py-24 px-4 bg-white text-black">
+      <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -16,8 +16,7 @@ export default function Projects() {
         >
           <span className="text-yellow-600 font-semibold tracking-wide uppercase">Our Portfolio</span>
           <h2 className="text-4xl md:text-5xl font-bold mt-4 mb-6">
-            Featured
-            <span className="text-yellow-600"> Projects</span>
+            Featured <span className="text-yellow-600">Projects</span>
           </h2>
           <p className="text-gray-600 text-lg max-w-3xl mx-auto">
             Explore our carefully curated collection of interior design projects that showcase 
@@ -25,16 +24,18 @@ export default function Projects() {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
           {projects.map((project, index) => (
-            <ProjectCard 
-              key={index} 
-              title={project.title} 
-              image={project.image} 
-              description={project.description}
-              category={project.category}
-              index={index}
-            />
+            <ProjectCard
+            key={index}
+            title={project.title}
+            image={project.image}
+            description={project.description}
+            category={project.category}
+            index={index}
+            slug={project.slug}
+/>
+
           ))}
         </div>
 

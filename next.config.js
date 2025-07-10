@@ -1,12 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // ❌ Ye hata do:
-  // output: 'export',
-
-  eslint: {
-    ignoreDuringBuilds: true,
+  images: {
+    domains: [
+      "images.pexels.com",
+      "upload.wikimedia.org",
+      "example.com", // ✅ example for dynamic images
+    ],
   },
-  images: { unoptimized: true },
 };
 
 module.exports = nextConfig;
