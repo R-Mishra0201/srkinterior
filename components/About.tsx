@@ -32,7 +32,7 @@ export default function About() {
             </p>
             <p className="text-gray-600 text-lg leading-relaxed mb-8">
               Our approach combines contemporary design principles with timeless elegance, 
-              ensuring every project becomes a unique expression of our clients' vision and lifestyle.
+              ensuring every project becomes a unique expression of our clients vision and lifestyle.
             </p>
             <motion.button
               whileHover={{ scale: 1.05 }}
